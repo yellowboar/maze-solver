@@ -177,6 +177,54 @@ class Maze():
                 cell = self._cells[i][j]
                 cell.visited = False
 
+    def solve(self):
+        return self._solve_r(0, 0)
+    
+    def _solve_r(self, i, j):
+        self._animate()
+        if i == self.num_rows - 1 and j == self.num_cols - 1:
+            return True
+        
+        curr_cell = self._cells[i][j]
+        curr_cell.visited = True
+
+        # left 
+        if j > 0 and not self._cells[i][j - 1].visited:
+            cell = self._cells[i][j - 1] 
+            if not curr_cell.has_left_wall and not cell.has_right_wall:
+                curr_cell.draw_move(cell)
+                if self._solve_r(i, j - 1):
+                    return True
+                curr_cell.draw_move(cell, True)
+
+        # right
+        if j < self.num_cols - 1 and not self._cells[i][j + 1].visited:
+            cell = self._cells[i][j + 1]
+            if not curr_cell.has_right_wall and not cell.has_left_wall:
+                curr_cell.draw_move(cell)
+                if self._solve_r(i, j + 1):
+                    return True
+                curr_cell.draw_move(cell, True)
+        
+        # top
+        if i > 0 and not self._cells[i - 1][j].visited:
+            cell = self._cells[i - 1][j]
+            if not curr_cell.has_top_wall and not cell.has_bottom_wall:
+                curr_cell.draw_move(cell)
+                if self._solve_r(i - 1, j):
+                    return True
+                curr_cell.draw_move(cell, True)
+        # bottom
+        if i < self.num_rows - 1 and not self._cells[i + 1][j].visited:
+            cell = self._cells[i + 1][j]
+            if not curr_cell.has_bottom_wall and not cell.has_top_wall:
+                curr_cell.draw_move(cell)
+                if self._solve_r(i + 1, j):
+                    return True
+                curr_cell.draw_move(cell, True)
+        
+        return False
+
     def _animate(self):
         self.win.redraw()
         sleep(0.05)
